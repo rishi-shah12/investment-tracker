@@ -1,0 +1,44 @@
+{% extends 'base.jinja2' %}
+
+{% block head %}
+<title>{{title}}</title>
+
+<style>
+
+h1{
+    text-align: center;
+}
+
+.back-button-wrapper{
+    text-align: center;
+    padding-top: 5rem;
+}
+
+.main-page-wrapper{
+    text-align: center;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+label{font-weight:bold}
+
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>Portfolio Tracker Homepage</h1>
+    <div class="main-page-wrapper">
+        <label> Portfolio actions:</label>
+        <a href="{{ url_for('view_portfolio_app') }}"><button>View Portfolio</button></a>
+        <a href="{{ url_for('download_portfolio_app') }}"><button>Download Portfolio</button></a>
+        <br><br>
+        <label> Trade actions: </label>
+        <a href="{{ url_for('add_transaction_app') }}"><button>Add Trades</button></a>
+        <a href="{{ url_for('remove_transaction_app') }}"><button>Remove Trades</button></a>
+        <a href="{{ url_for('modify_transaction_app') }}"><button>Modify Trades</button></a>
+    </div>
+
+    <div class="back-button-wrapper">
+    <a href="{{ url_for('my_app') }}"><button>Back to Home</button></a>
+    </div>
+{% endblock %}

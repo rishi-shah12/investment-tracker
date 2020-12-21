@@ -1,0 +1,44 @@
+{% extends 'base.jinja2' %}
+{% block head %}
+<title>{{title}}</title>
+
+<style>
+
+h1{
+    width: 100vw;
+    text-align: center;
+}
+
+form {
+    text-align: center;
+}
+
+.buttonWrapper{
+    padding-top: 5rem;
+    text-align: center;
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>Add to Portfolio</h1>
+    <div class="form-wrapper">
+        <form method="POST">
+            <label>Date:</label>
+            <input type="date" name="date" required="required" id="date">
+            <label>Stock/ETF Ticker</label>
+            <input type="text" id="stock" required="required" name="stock">
+            <label>Number of Shares:</label>
+            <input type="text" id="shares" required="required" name="shares">
+            <label>Price Bought:</label>
+            <input type="text" id="price" required="required" name="price">
+            <a href="{{ url_for('add_transaction_app') }}"><button>Submit</button></a>
+        </form>
+    </div>
+    <div class="buttonWrapper">
+        <a href="{{ url_for('portfolio_app') }}"><button>Back</button></a>
+        <a href="{{ url_for('my_app') }}"><button>Back to Home</button></a>
+    <p></p>
+    </div>
+{% endblock %}

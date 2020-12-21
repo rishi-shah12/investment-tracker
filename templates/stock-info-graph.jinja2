@@ -1,0 +1,49 @@
+{% extends 'base.jinja2' %}
+{% block head %}
+<title>{{title}}</title>
+
+<style>
+
+h1{
+    width: 100vw;
+    text-align: center;
+}
+
+.buttonWrapper{
+    text-align: center;
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+    <h1>Stock Graph Generator</h1>
+    <div class="buttonWrapper">
+        <form method="POST">
+            <label>Stock/ETF Ticker:</label>
+            <input type="text" id="stock" required="required" name="stock">
+            <label>Metric:</label>
+            <select name="stat" id="stat">
+                <option value="price">Price</option>
+                <option value="dividendYield">Dividend Yield</option>
+                <option value="lastDividendValue">Previous Dividend</option>
+            </select>
+            <label>Timeframe:</label>
+            <select name="time" id="time">
+                <option value="week">1 Week</option>
+                <option value="month">1 Month</option>
+                <option value="6month">6 Months</option>
+                <option value="1yr">1 Year</option>
+                <option value="5yr">5 Years</option>
+                <option value="all">All Time</option>
+            </select>
+            <a href="{{ url_for('my_form_stock_post') }}"><button>Submit</button></a>
+        </form>
+    <p>Add .TO as a suffix for stocks on the Toronto Stock Exchange</p>
+    <p>Add .L as a suffix for stocks on the London Stock Exchange</p>
+    <p>Add .V as a suffix for stocks on the Toronto Venture Exchange</p>
+    <p>Add .NE as a suffix for stocks on the Neo Exchange </p>
+    <a href="{{ url_for('my_app') }}"><button>Back</button></a>
+    <p></p>
+    </div>
+{% endblock %}

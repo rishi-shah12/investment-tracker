@@ -1,0 +1,26 @@
+{% extends 'base.jinja2' %}
+{% block head %}
+<title>{{title}}</title>
+
+<style>
+
+h1{
+    width: 100vw;
+    text-align: center;
+}
+
+.buttonWrapper{
+    text-align: center;
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>Stock Information Results</h1>
+    <div class="buttonWrapper">
+            <p>{{ statistic }} for {{ stock }} is {{ value }}</p>
+            <a href="{{ url_for('my_form_stock_post') }}"><button>Back</button></a>
+            <a href="{{ url_for('my_app') }}"><button>Back to Home</button></a>
+    </div>
+{% endblock %}

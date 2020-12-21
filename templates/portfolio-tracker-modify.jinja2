@@ -1,0 +1,106 @@
+{% extends 'base.jinja2' %}
+{% block head %}
+<title>{{title}}</title>
+
+<style>
+
+h1{
+    width: 100vw;
+    text-align: center;
+}
+
+form {
+    text-align: center;
+}
+
+.buttonWrapper{
+    padding-top: 5rem;
+    text-align: center;
+}
+
+.form-wrapper{
+    padding-bottom: 20rem;
+}
+
+.select-wrapper{
+    padding-bottom: 2rem;
+}
+
+table{
+  border: 1px solid black;
+  text-align: center;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+th, td {
+  border: 1px solid black;
+  text-align: center;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>Modify trades from Portfolio</h1>
+    <div class="form-wrapper">
+     <form method="POST">
+        <div class="select-wrapper">
+            <label>Pick the stock to modify. Transaction ID:</label>
+            <select name="modify" id="modify">
+                {% for x in range(total) %}
+                <option value={{ transaction_ids[x] }}>{{ transaction_ids[x] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+            <br>
+            <label>Date:</label>
+            <input type="date" name="date" required="required" id="date">
+            <label>Stock/ETF Ticker</label>
+            <input type="text" id="stock" required="required" name="stock">
+            <label>Number of Shares:</label>
+            <input type="text" id="shares" required="required" name="shares">
+            <label>Price Bought:</label>
+            <input type="text" id="price" required="required" name="price">
+            <a href="{{ url_for('modify_transaction_app') }}"><button>Submit</button></a>
+        </form>
+    </div>
+    <div class="table-div">
+        <table>
+            <tr>
+                <th>Transaction ID</th>
+                <th>Date of Transaction</th>
+                <th>Stock Ticker</th>
+                <th>Number of Shares</th>
+                <th>Price Bought Per Share</th>
+                <th>Current Price Per Share</th>
+                <th>Unrealized Gain ($)</th>
+                <th>Unrealized Gain (%)</th>
+                <th>Dividend Yield on Cost (%)</th>
+            </tr>
+            {% for x in range(total) %}
+            <tr>
+                <td>{{ transaction_ids[x] }}</td>
+                <td>{{ dates[x] }}</td>
+                <td>{{ tickers[x] }}</td>
+                <td>{{ shares[x] }}</td>
+                <td>${{ prices[x] }}</td>
+                <td>${{ current_prices[x] }}</td>
+                <td>${{ unreal_gain_dollar[x] }}</td>
+                <td>{{ unreal_gain_pct[x] }}%</td>
+                <td>{{ div_yield_on_cost[x] }}%</td>
+            </tr>
+          {% endfor %}
+        </table>
+    </div>
+    <div class="buttonWrapper">
+        <a href="{{ url_for('portfolio_app') }}"><button>Back</button></a>
+        <a href="{{ url_for('my_app') }}"><button>Back to Home</button></a>
+    <p></p>
+    </div>
+{% endblock %}
+x
