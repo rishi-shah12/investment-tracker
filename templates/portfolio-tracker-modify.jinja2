@@ -81,6 +81,7 @@ th, td {
                 <th>Unrealized Gain ($)</th>
                 <th>Unrealized Gain (%)</th>
                 <th>Dividend Yield on Cost (%)</th>
+                <th>Portfolio (%)</th>
             </tr>
             {% for x in range(total) %}
             <tr>
@@ -93,6 +94,7 @@ th, td {
                 <td>${{ unreal_gain_dollar[x] }}</td>
                 <td>{{ unreal_gain_pct[x] }}%</td>
                 <td>{{ div_yield_on_cost[x] }}%</td>
+                <td>{{ port_comp[x] }}%</td>
             </tr>
           {% endfor %}
         </table>

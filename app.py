@@ -1,3 +1,4 @@
+import json
 import os
 from datetime import time, datetime
 from flask import Flask, request, render_template, redirect, send_file
@@ -8,10 +9,18 @@ import jinja2
 pd.options.plotting.backend = "plotly"
 import plotly
 import csv
+import numpy as np
+import plotly.graph_objs as go
+import plotly.io as pio
+#pio.renderers.default = "json"
+import ipython_genutils
+import nbformat
+import plotly.express as px
 
 app = Flask(__name__)
 
 # Get the information from yfinance for the entered stock
+
 def get_info(ticker):
     stock = yf.Ticker(ticker)
     return(stock.info)
@@ -76,7 +85,14 @@ def get_other_info(prices, tickers, shares):
     unrealized_gains_dollar= []
     unrealized_gains_percent = []
     dividend_yields_on_costs = []
+    portfolio_compositions = []
 
+    total_portfolio = 0
+    for y in range(len(prices)):
+        stock_info = get_info(tickers[y])
+        total_portfolio = total_portfolio + (float(stock_info['regularMarketPrice'])*shares[y])
+
+    print("The TOTAL AMOUNT IN PORT IS: " + str(total_portfolio))
     for x in range(len(prices)):
         ticker = tickers[x]
         stock_info = get_info(ticker)
@@ -85,6 +101,8 @@ def get_other_info(prices, tickers, shares):
         bought_cost = prices[x]*shares[x]
         current_cost = current_price*shares[x]
         unrealized_gain_dollar = float(current_cost - bought_cost)
+
+        portfolio_compositions.append('{:,.2f}'.format((current_cost/total_portfolio)*100))
 
         unrealized_gain_percent = float(((current_cost/bought_cost) - 1)*100)
 
@@ -99,7 +117,7 @@ def get_other_info(prices, tickers, shares):
         unrealized_gains_percent.append('{:,.2f}'.format(unrealized_gain_percent))
         dividend_yields_on_costs.append('{:,.2f}'.format(dividend_yield_on_cost))
 
-    return current_prices, unrealized_gains_dollar, unrealized_gains_percent, dividend_yields_on_costs
+    return current_prices, unrealized_gains_dollar, unrealized_gains_percent, dividend_yields_on_costs, portfolio_compositions
 
 def remove_stock(id):
     conn = sqlite3.connect('/Users/rishishah/Desktop/Projects/investment-tracker/portfolio.db')
@@ -137,70 +155,99 @@ def generate_csv(ids, dates, tickers, shares, costs, current_prices, unrealized_
 def generate_plot(ticker, metric, time):
     info = yf.Ticker(ticker)
     history = info.history(period=time)
+    history['Dates'] = history.index
     history = history.rename(columns={'Close': 'Price'})
-    data = history[metric]
-    figure = data.plot.line(labels={
-        "Date": "Date",
-        "value": metric,
-        "variable": "Variable(s) Present in Chart"}, title=ticker + " " + metric + "-" + time)
-    return figure
+    input = history[['Dates', metric]]
 
+    data = [
+        go.Line(
+            x=input["Dates"],
+            y=input[metric]
+        )
+    ]
+    graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
+    return graphJSON
 
+def generate_pie_plot(tickers, current_prices):
+    data = [
+        go.Pie(
+            labels = tickers,
+            values = current_prices,
+            hoverinfo='label+percent'
+        )
+    ]
+    graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
+    return graphJSON
 
 # Stock Info Page
-@app.route('/stock-info')
+@app.route('/stock-info/')
 def my_form_stock():
     return render_template('stock-info-home.jinja2', title="Welcome")
 
 # Get the information entered by the user on the main page
-@app.route('/stock-info', methods=['POST'])
+@app.route('/stock-info/', methods=['POST'])
 def my_form_stock_post():
     stock = request.form['stock']
     statistic = request.form['stat']
     return redirect('/stock-info/' + stock + '/' + statistic)
 
-@app.route('/stock-info/<stock>/<statistic>')
+@app.route('/stock-info/<stock>/<statistic>/')
 def single_stock(stock, statistic):
     info = get_info(stock)
     value = get_statistic(info, statistic)
 
     return render_template('stock-info-individual.jinja2', value=value, stock=stock, statistic=statistic)
 
-@app.route('/stock-info/graphing')
+@app.route('/stock-info/graphing/')
 def my_form_graph():
     return render_template('stock-info-graph.jinja2', title="Welcome")
 
-@app.route('/portfolio-tracker')
+@app.route('/stock-info/graphing/', methods=['POST'])
+def my_form_graph_input():
+    stock = request.form['stock']
+    stat = request.form['stat']
+    timeframe = request.form['time']
+
+    return redirect('/stock-info/graphing/' + stock + '/' + stat + '/' + timeframe)
+
+@app.route('/stock-info/graphing/<stock>/<statistic>/<timeframe>/')
+def single_graph(stock, statistic, timeframe):
+    graph = generate_plot(stock, statistic, timeframe)
+    title = (str(stock) + " " + str(statistic) + " for a time period of " + str(timeframe))
+    yaxis = statistic
+    return render_template('stock-info-graph-individual.jinja2', plot=graph, title=title, yaxis=yaxis)
+
+@app.route('/portfolio-tracker/')
 def portfolio_app():
     if not os.path.exists('/Users/rishishah/Desktop/Projects/investment-tracker/portfolio.db'):
         create_db()
     return render_template('portfolio-tracker-home.jinja2', title="Portfolio Tracker")
 
-@app.route('/portfolio-tracker/add')
+@app.route('/portfolio-tracker/add/')
 def add_transaction_app():
     return render_template('portfolio-tracker-add.jinja2', title="Portfolio")
 
-@app.route('/portfolio-tracker/remove')
+@app.route('/portfolio-tracker/remove/')
 def remove_transaction_app():
     transaction_ids, dates, tickers, shares, prices = get_stocks()
-    current_prices, unreal_gain_dollar, unreal_gain_pct, div_yield_on_cost = get_other_info(prices, tickers, shares)
+    current_prices, unreal_gain_dollar, unreal_gain_pct, div_yield_on_cost, port_comp = get_other_info(prices, tickers, shares)
     total = len(dates)
 
     return render_template('portfolio-tracker-remove.jinja2', title="Portfolio", transaction_ids=transaction_ids, dates=dates, tickers=tickers, shares=shares,
                            prices=prices, total=total, current_prices=current_prices, unreal_gain_dollar=unreal_gain_dollar,
-                           unreal_gain_pct=unreal_gain_pct, div_yield_on_cost=div_yield_on_cost)
+                           unreal_gain_pct=unreal_gain_pct, div_yield_on_cost=div_yield_on_cost, port_comp=port_comp)
 
-@app.route('/portfolio-tracker/modify')
+@app.route('/portfolio-tracker/modify/')
 def modify_transaction_app():
     transaction_ids, dates, tickers, shares, prices = get_stocks()
-    current_prices, unreal_gain_dollar, unreal_gain_pct, div_yield_on_cost = get_other_info(prices, tickers, shares)
+    current_prices, unreal_gain_dollar, unreal_gain_pct, div_yield_on_cost, port_comp = get_other_info(prices, tickers, shares)
     total = len(dates)
 
     return render_template('portfolio-tracker-modify.jinja2', title="Portfolio", transaction_ids=transaction_ids, dates=dates, tickers=tickers, shares=shares,
                            prices=prices, total=total, current_prices=current_prices, unreal_gain_dollar=unreal_gain_dollar,
-                           unreal_gain_pct=unreal_gain_pct, div_yield_on_cost=div_yield_on_cost)
+                           unreal_gain_pct=unreal_gain_pct, div_yield_on_cost=div_yield_on_cost, port_comp=port_comp)
 
-@app.route('/portfolio-tracker/modify', methods=['POST'])
+@app.route('/portfolio-tracker/modify/', methods=['POST'])
 def modify_transaction_app_form():
     stock_to_modify = request.form['modify']
     stock = request.form['stock']
@@ -210,7 +257,7 @@ def modify_transaction_app_form():
     modify_stock(stock_to_modify, date, stock, shares, price)
     return redirect('/portfolio-tracker/modify')
 
-@app.route('/portfolio-tracker/remove', methods=['POST'])
+@app.route('/portfolio-tracker/remove/', methods=['POST'])
 def remove_transaction_app_post():
     stock_to_remove = request.form['remove']
     transaction_ids, dates, tickers, shares, prices = get_stocks()
@@ -220,7 +267,7 @@ def remove_transaction_app_post():
 
     return redirect('/portfolio-tracker/remove')
 
-@app.route('/portfolio-tracker/add', methods=['POST'])
+@app.route('/portfolio-tracker/add/', methods=['POST'])
 def add_transaction_app_form():
     stock = request.form['stock']
     shares = int(request.form['shares'])
@@ -229,17 +276,18 @@ def add_transaction_app_form():
     add_stock(date, stock, shares, price)
     return redirect('/portfolio-tracker/add')
 
-@app.route('/portfolio-tracker/portfolio')
+@app.route('/portfolio-tracker/portfolio/')
 def view_portfolio_app():
     transaction_ids, dates, tickers, shares, prices = get_stocks()
-    current_prices, unreal_gain_dollar, unreal_gain_pct, div_yield_on_cost = get_other_info(prices, tickers, shares)
+    current_prices, unreal_gain_dollar, unreal_gain_pct, div_yield_on_cost, port_comp = get_other_info(prices, tickers, shares)
     generate_csv(transaction_ids, dates, tickers, shares, prices, current_prices, unreal_gain_dollar, unreal_gain_pct, div_yield_on_cost)
     total = len(dates)
-    return render_template('portfolio-tracker-table.jinja2', title="Portfolio", transaction_ids=transaction_ids, dates=dates, tickers=tickers, shares=shares,
+    pi_chart = generate_pie_plot(tickers, port_comp)
+    return render_template('portfolio-tracker-table.jinja2', title="Portfolio Compositions", transaction_ids=transaction_ids, dates=dates, tickers=tickers, shares=shares,
                            prices=prices, total=total, current_prices=current_prices, unreal_gain_dollar=unreal_gain_dollar,
-                           unreal_gain_pct=unreal_gain_pct, div_yield_on_cost=div_yield_on_cost)
+                           unreal_gain_pct=unreal_gain_pct, div_yield_on_cost=div_yield_on_cost, port_comp=port_comp, plot=pi_chart)
 
-@app.route('/portfolio-tracker/download')
+@app.route('/portfolio-tracker/download/')
 def download_portfolio_app():
     transaction_ids, dates, tickers, shares, prices = get_stocks()
     current_prices, unreal_gain_dollar, unreal_gain_pct, div_yield_on_cost = get_other_info(prices, tickers, shares)

@@ -34,6 +34,12 @@ th, td {
 {% endblock %}
 
 {% block content %}
+    <head lang="en">
+    <meta charset="UTF-8">
+    <title>My First Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+</head>
 <h1>Portfolio View</h1>
     <div class="table-div">
         <table>
@@ -47,6 +53,7 @@ th, td {
                 <th>Unrealized Gain ($)</th>
                 <th>Unrealized Gain (%)</th>
                 <th>Dividend Yield on Cost (%)</th>
+                <th>Portfolio (%)</th>
             </tr>
             {% for x in range(total) %}
             <tr>
@@ -59,10 +66,20 @@ th, td {
                 <td>${{ unreal_gain_dollar[x] }}</td>
                 <td>{{ unreal_gain_pct[x] }}%</td>
                 <td>{{ div_yield_on_cost[x] }}%</td>
+                <td>{{ port_comp[x] }}%</td>
             </tr>
           {% endfor %}
         </table>
     </div>
+    <div class="col-md-6">
+            <div class="chart" id="linegraph">
+                <script>
+                    var title = "{{ title | safe }}";
+                    var graphs = {{plot | safe}};
+                    Plotly.plot('linegraph',graphs,{"title": title});
+                </script>
+            </div>
+        </div>
     <div class="buttonWrapper">
         <a href="{{ url_for('portfolio_app') }}"><button>Back</button></a>
         <a href="{{ url_for('my_app') }}"><button>Back to Home</button></a>
