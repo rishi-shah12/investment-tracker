@@ -1,3 +1,5 @@
 Transaction ID,Date of Transaction,Stock (Ticker),Number of Shares,Cost Per Share,Current Price Per Share,Unrealized Gain ($),Unrealized Gain (%),Dividend Yield on Cost (%)
 3,2020-12-14,MSFT,5,$1500.0,$217.55,"$-6,412.25",-85.50%,0.15%
-6,2020-12-21,t.to,25,$25.0,$25.32,$8.00,1.28%,4.96%
+6,2020-12-03,T.TO,25,$25.0,$25.32,$8.00,1.28%,4.96%
+7,2020-12-10,JNJ,10,$100.0,$152.01,$520.10,52.01%,3.97%
+8,2020-12-03,RY.TO,10,$100.0,$103.35,$33.50,3.35%,4.29%

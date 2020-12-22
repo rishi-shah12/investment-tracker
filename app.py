@@ -12,7 +12,6 @@ import csv
 import numpy as np
 import plotly.graph_objs as go
 import plotly.io as pio
-#pio.renderers.default = "json"
 import ipython_genutils
 import nbformat
 import plotly.express as px
@@ -187,7 +186,7 @@ def my_form_stock():
 # Get the information entered by the user on the main page
 @app.route('/stock-info/', methods=['POST'])
 def my_form_stock_post():
-    stock = request.form['stock']
+    stock = request.form['stock'].upper()
     statistic = request.form['stat']
     return redirect('/stock-info/' + stock + '/' + statistic)
 
@@ -204,7 +203,7 @@ def my_form_graph():
 
 @app.route('/stock-info/graphing/', methods=['POST'])
 def my_form_graph_input():
-    stock = request.form['stock']
+    stock = request.form['stock'].upper()
     stat = request.form['stat']
     timeframe = request.form['time']
 
@@ -250,7 +249,7 @@ def modify_transaction_app():
 @app.route('/portfolio-tracker/modify/', methods=['POST'])
 def modify_transaction_app_form():
     stock_to_modify = request.form['modify']
-    stock = request.form['stock']
+    stock = request.form['stock'].upper()
     shares = int(request.form['shares'])
     date = request.form['date']
     price = float(request.form['price'])
@@ -269,7 +268,7 @@ def remove_transaction_app_post():
 
 @app.route('/portfolio-tracker/add/', methods=['POST'])
 def add_transaction_app_form():
-    stock = request.form['stock']
+    stock = request.form['stock'].upper()
     shares = int(request.form['shares'])
     date = request.form['date']
     price = float(request.form['price'])
