@@ -19,6 +19,7 @@ h1{
     justify-content: center;
     margin-left: auto;
     margin-right: auto;
+     padding-top: 3rem;
 }
 label{font-weight:bold}
 
@@ -27,18 +28,17 @@ label{font-weight:bold}
 
 {% block content %}
 <h1>Portfolio Tracker Homepage</h1>
+<p>Page to View, Edit, Delete Items from the Portfolio</p>
+<hr>
     <div class="main-page-wrapper">
         <label> Portfolio actions:</label>
-        <a href="{{ url_for('view_portfolio_app') }}"><button>View Portfolio</button></a>
-        <a href="{{ url_for('download_portfolio_app') }}"><button>Download Portfolio</button></a>
+        <a class="btn btn-primary" href="{{ url_for('view_portfolio_app') }}" >View Portfolio</a>
+        <a class="btn btn-primary" href="{{ url_for('download_portfolio_app') }}" >Download Portfolio</a>
         <br><br>
         <label> Trade actions: </label>
-        <a href="{{ url_for('add_transaction_app') }}"><button>Add Trades</button></a>
-        <a href="{{ url_for('remove_transaction_app') }}"><button>Remove Trades</button></a>
-        <a href="{{ url_for('modify_transaction_app') }}"><button>Modify Trades</button></a>
+        <a class="btn btn-primary" href="{{ url_for('add_transaction_app') }}" >Add Trades</a>
+        <a class="btn btn-primary" href="{{ url_for('remove_transaction_app') }}" >Remove Trades</a>
+        <a class="btn btn-primary" href="{{ url_for('modify_transaction_app') }}" >Modify Trades</a>
     </div>
 
-    <div class="back-button-wrapper">
-    <a href="{{ url_for('my_app') }}"><button>Back to Home</button></a>
-    </div>
 {% endblock %}

@@ -20,6 +20,7 @@ form {
 
 .form-wrapper{
     padding-bottom: 5rem;
+    padding-top: 3rem;
 }
 
 .select-wrapper{
@@ -47,6 +48,8 @@ th, td {
 
 {% block content %}
 <h1>Modify trades from Portfolio</h1>
+<p>Modify a stock currently in the Investment Portfolio</p>
+<hr>
     <div class="form-wrapper">
      <form method="POST">
         <div class="select-wrapper">
@@ -66,7 +69,7 @@ th, td {
             <input type="text" id="shares" required="required" name="shares">
             <label>Price Bought:</label>
             <input type="text" id="price" required="required" name="price">
-            <a href="{{ url_for('modify_transaction_app') }}"><button>Submit</button></a>
+            <a href="{{ url_for('modify_transaction_app') }}"><button class="btn btn-primary">Submit</button></a>
         </form>
     </div>
     <div class="table-div">
@@ -98,11 +101,6 @@ th, td {
             </tr>
           {% endfor %}
         </table>
-    </div>
-    <div class="buttonWrapper">
-        <a href="{{ url_for('portfolio_app') }}"><button>Back</button></a>
-        <a href="{{ url_for('my_app') }}"><button>Back to Home</button></a>
-    <p></p>
     </div>
 {% endblock %}
 x

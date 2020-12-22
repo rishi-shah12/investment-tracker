@@ -6,21 +6,45 @@
 <style>
 
 h1{
+    padding-top: 4rem;
     width: 100vw;
     text-align: center;
+    padding-bottom: 1rem;
+}
+
+p{
+    width: 100vw;
+    text-align: center;
+    padding-bottom: 1rem;
 }
 
 .buttonWrapper{
     text-align: center;
+    padding-top: 3rem;
 }
+
+hr{
+    width: 50vw;
+    margin: auto;
+    border:solid 2px black;
+
+}
+
 
 </style>
 {% endblock %}
 
 {% block content %}
+
 <h1>Stock Market & Portfolio</h1>
-    <div class="buttonWrapper">
-        <a href="{{ url_for('my_form_stock') }}"><button>Stock Information</button></a>
-        <a href="{{ url_for('portfolio_app') }}"><button>Portfolio Tracker</button></a>
-    </div>
+<p>A Project by Rishi Shah</p>
+<hr>
+<div class="buttonWrapper">
+    <a class="btn btn-primary" href="{{ url_for('my_form_stock') }}" >Stock Information</a>
+    <a class="btn btn-primary" href="{{ url_for('portfolio_app') }}" >Portfolio Tracker</a>
+</div>
 {% endblock %}
+
+<!--    <a href="{{ url_for('my_form_stock') }}"><button>Stock Information</button></a>
+        <a href="{{ url_for('portfolio_app') }}"><button>Portfolio Tracker</button></a>
+        -->

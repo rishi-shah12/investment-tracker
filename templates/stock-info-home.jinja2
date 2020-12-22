@@ -5,19 +5,40 @@
 <style>
 
 h1{
+    padding-top: 4rem;
     width: 100vw;
     text-align: center;
+    padding-bottom: 1rem;
+}
+
+.header-wrap{
+    border:solid 2px black;
+}
+
+p{
+    width: 100vw;
+    text-align: center;
+    padding-bottom: 1rem;
+}
+
+.helper-info{
+    padding-bottom: 4rem;
+    padding-top: 4rem;
 }
 
 .buttonWrapper{
     text-align: center;
+    padding-top: 3rem;
 }
 
 </style>
 {% endblock %}
 
 {% block content %}
-<h1>Stock Information Search</h1>
+<h1>Stock Lookup</h1>
+<p>Enter the ticker of the stock to get some information about it</p>
+<hr>
+
     <div class="buttonWrapper">
         <form method="POST">
             <label>Stock/ETF Ticker:</label>
@@ -34,14 +55,19 @@ h1{
                 <option value="trailingEps">Trailing EPS</option>
                 <option value="pegRatio">PEG Ratio</option>
             </select>
-            <a href="{{ url_for('my_form_stock_post') }}"><button>Submit</button></a>
+           <!-- <a href="{{ url_for('my_form_stock_post') }}" class="btn btn-primary"><button></button>Submit</a>-->
+            <a href="{{ url_for('my_form_stock_post') }}"><button class="btn btn-primary">Submit</button></a>
         </form>
-    <p>Add .TO as a suffix for stocks on the Toronto Stock Exchange</p>
-    <p>Add .L as a suffix for stocks on the London Stock Exchange</p>
-    <p>Add .V as a suffix for stocks on the Toronto Venture Exchange</p>
-    <p>Add .NE as a suffix for stocks on the Neo Exchange </p>
-    <a href="{{ url_for('my_app') }}"><button>Back</button></a>
-    <a href="{{ url_for('my_form_graph') }}"><button>Graphing</button></a>
-    <p></p>
+        <div class="helper-info">
+            <button type="button" class="btn btn-secondary" data-bs-placement="right" data-bs-toggle="tooltip" data-bs-html="true"
+                    title="<em>For Stocks/ETFs not located on the NYSE/NASDAQ add a</em> <u>suffix</u> <em>of the Market the equity is on</em>">
+                    Hover for more info
+            </button>
+                <script>
+                    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+                    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl)})
+                </script>
+        </div>
     </div>
 {% endblock %}

@@ -17,12 +17,17 @@ form {
     padding-top: 5rem;
     text-align: center;
 }
+.form-wrapper{
+    padding-top: 3rem;
+}
 
 </style>
 {% endblock %}
 
 {% block content %}
 <h1>Add to Portfolio</h1>
+<p>Add a transaction to the Investment Portfolio</p>
+<hr></hr>
     <div class="form-wrapper">
         <form method="POST">
             <label>Date:</label>
@@ -33,12 +38,8 @@ form {
             <input type="text" id="shares" required="required" name="shares">
             <label>Price Bought:</label>
             <input type="text" id="price" required="required" name="price">
-            <a href="{{ url_for('add_transaction_app') }}"><button>Submit</button></a>
+            <a href="{{ url_for('add_transaction_app') }}"><button class="btn btn-primary">Submit</button></a>
         </form>
     </div>
-    <div class="buttonWrapper">
-        <a href="{{ url_for('portfolio_app') }}"><button>Back</button></a>
-        <a href="{{ url_for('my_app') }}"><button>Back to Home</button></a>
-    <p></p>
-    </div>
+
 {% endblock %}

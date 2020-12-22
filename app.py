@@ -140,16 +140,16 @@ def modify_stock(id, input_date, ticker, shares, price):
 
 
 def generate_csv(ids, dates, tickers, shares, costs, current_prices, unrealized_gains_dollar,
-                 unrealized_gains_percent, dividend_yields_on_costs ):
+                 unrealized_gains_percent, dividend_yields_on_costs, pct_port ):
     with open('/Users/rishishah/Desktop/Projects/investment-tracker/portfolio.csv', 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(["Transaction ID", "Date of Transaction", "Stock (Ticker)", "Number of Shares",
                          "Cost Per Share", "Current Price Per Share", "Unrealized Gain ($)", "Unrealized Gain (%)",
-                         "Dividend Yield on Cost (%)"])
+                         "Dividend Yield on Cost (%)", "Percent of Portfolio (%)"])
         for x in range(len(ids)):
             writer.writerow([str(ids[x]), str(dates[x]), str(tickers[x]), str(shares[x]), "$" + str(costs[x]),
                              "$" + str(current_prices[x]), "$" + str(unrealized_gains_dollar[x]),
-                             str(unrealized_gains_percent[x]) + "%", str(dividend_yields_on_costs[x]) + "%"])
+                             str(unrealized_gains_percent[x]) + "%", str(dividend_yields_on_costs[x]) + "%", str(pct_port) + "%"])
 
 def generate_plot(ticker, metric, time):
     info = yf.Ticker(ticker)
@@ -186,6 +186,7 @@ def my_form_stock():
 # Get the information entered by the user on the main page
 @app.route('/stock-info/', methods=['POST'])
 def my_form_stock_post():
+    print("HELLO THIS IS BEING CLICKED")
     stock = request.form['stock'].upper()
     statistic = request.form['stat']
     return redirect('/stock-info/' + stock + '/' + statistic)
@@ -248,6 +249,7 @@ def modify_transaction_app():
 
 @app.route('/portfolio-tracker/modify/', methods=['POST'])
 def modify_transaction_app_form():
+    print("HELLO MY NAME IS RISHI SHAH ")
     stock_to_modify = request.form['modify']
     stock = request.form['stock'].upper()
     shares = int(request.form['shares'])
@@ -259,11 +261,7 @@ def modify_transaction_app_form():
 @app.route('/portfolio-tracker/remove/', methods=['POST'])
 def remove_transaction_app_post():
     stock_to_remove = request.form['remove']
-    transaction_ids, dates, tickers, shares, prices = get_stocks()
     remove_stock(stock_to_remove)
-    current_prices, unreal_gain_dollar, unreal_gain_pct, div_yield_on_cost = get_other_info(prices, tickers, shares)
-    total = len(dates)
-
     return redirect('/portfolio-tracker/remove')
 
 @app.route('/portfolio-tracker/add/', methods=['POST'])
@@ -279,7 +277,6 @@ def add_transaction_app_form():
 def view_portfolio_app():
     transaction_ids, dates, tickers, shares, prices = get_stocks()
     current_prices, unreal_gain_dollar, unreal_gain_pct, div_yield_on_cost, port_comp = get_other_info(prices, tickers, shares)
-    generate_csv(transaction_ids, dates, tickers, shares, prices, current_prices, unreal_gain_dollar, unreal_gain_pct, div_yield_on_cost)
     total = len(dates)
     pi_chart = generate_pie_plot(tickers, port_comp)
     return render_template('portfolio-tracker-table.jinja2', title="Portfolio Compositions", transaction_ids=transaction_ids, dates=dates, tickers=tickers, shares=shares,
@@ -289,8 +286,8 @@ def view_portfolio_app():
 @app.route('/portfolio-tracker/download/')
 def download_portfolio_app():
     transaction_ids, dates, tickers, shares, prices = get_stocks()
-    current_prices, unreal_gain_dollar, unreal_gain_pct, div_yield_on_cost = get_other_info(prices, tickers, shares)
-    generate_csv(transaction_ids, dates, tickers, shares, prices, current_prices, unreal_gain_dollar, unreal_gain_pct, div_yield_on_cost)
+    current_prices, unreal_gain_dollar, unreal_gain_pct, div_yield_on_cost, pct_port = get_other_info(prices, tickers, shares)
+    generate_csv(transaction_ids, dates, tickers, shares, prices, current_prices, unreal_gain_dollar, unreal_gain_pct, div_yield_on_cost, pct_port)
     return send_file('portfolio.csv', as_attachment=True)
 
 @app.route('/')

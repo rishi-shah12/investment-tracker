@@ -20,6 +20,7 @@ form {
 
 .form-wrapper{
     padding-bottom: 5rem;
+    padding-top: 3rem;
 }
 
 table{
@@ -43,6 +44,8 @@ th, td {
 
 {% block content %}
 <h1>Remove from Portfolio</h1>
+<p>Remove a stock from the Investment Portfolio</p>
+<hr>
     <div class="form-wrapper">
         <form method="POST">
             <label>Pick the stock to remove. Transaction ID:</label>
@@ -51,7 +54,7 @@ th, td {
                 <option value={{ transaction_ids[x] }}>{{ transaction_ids[x] }}</option>
                 {% endfor %}
             </select>
-            <a href="{{ url_for('add_transaction_app') }}"><button>Submit</button></a>
+            <a href="{{ url_for('remove_transaction_app_post') }}"><button class="btn btn-primary">Submit</button></a>
         </form>
     </div>
     <div class="table-div">
